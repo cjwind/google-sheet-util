@@ -21,14 +21,14 @@ func (gs *GoogleSheet) Init(spreadsheetId string) (err error) {
 	return err
 }
 
-func (gs *GoogleSheet) Read(readRange string) [][]interface{} {
+func (gs *GoogleSheet) Read(readRange string) ([][]interface{}, error) {
 	resp, err := gs.srv.Spreadsheets.Values.Get(gs.spreadsheetId, readRange).Do()
 
 	if err != nil {
-		log.Fatalf("Unable to retrieve data from sheet: %v", err)
+		return nil, err
 	}
 
-	return resp.Values
+	return resp.Values, err
 }
 
 func (gs *GoogleSheet) Write(writeRange string, values [][]interface{}) {
@@ -78,7 +78,11 @@ func main() {
 	}
 
 	readRange := "Table!A2:E"
-	values := gs.Read(readRange)
+	values, err := gs.Read(readRange)
+	if err != nil {
+		log.Fatalf("Unable to retrieve data from sheet: %v", err)
+	}
+
 	fmt.Println(values)
 
 	var writeValues [][]interface{}
