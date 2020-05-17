@@ -72,8 +72,7 @@ func main() {
 	spreadsheetId := "12Luq-VG23UxdcIhfmNCtW_BL4fpHPUwUK-cfwRJyJx0"
 
 	var gs GoogleSheet
-	err := gs.Init(spreadsheetId)
-	if err != nil {
+	if err := gs.Init(spreadsheetId); err != nil {
 		log.Fatalf("Unable to init google sheet api: %v\n Run source env?", err)
 	}
 
