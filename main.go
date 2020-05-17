@@ -35,18 +35,18 @@ func main() {
 	var writeValues [][]interface{}
 	row := []interface{}{"AAA", "BBB"}
 	writeValues = append(writeValues, row)
-	gs.write(spreadsheetId, "Table", writeValues)
+	gs.Write(spreadsheetId, "Table", writeValues)
 
 	var updateValues [][]interface{}
 	row = []interface{}{"BBB", "CCC", "DDD"}
 	updateValues = append(updateValues, row)
-	gs.update(spreadsheetId, "Table!A3", updateValues)
+	gs.Update(spreadsheetId, "Table!A3", updateValues)
 
 	clearRange := "Table!A3:E"
-	gs.clear(spreadsheetId, clearRange)
+	gs.Clear(spreadsheetId, clearRange)
 }
 
-func (gs *GoogleSheet) clear(spreadsheetId string, clearRange string) {
+func (gs *GoogleSheet) Clear(spreadsheetId string, clearRange string) {
 	// rb has type *ClearValuesRequest
 	rb := &sheets.ClearValuesRequest{}
 
@@ -56,7 +56,7 @@ func (gs *GoogleSheet) clear(spreadsheetId string, clearRange string) {
 	}
 }
 
-func (gs *GoogleSheet) update(spreadsheetId string, updateRange string, updateValues [][]interface{}) {
+func (gs *GoogleSheet) Update(spreadsheetId string, updateRange string, updateValues [][]interface{}) {
 	valueInputOption := "RAW"
 	rb := &sheets.ValueRange{
 		MajorDimension: "ROWS",
@@ -69,7 +69,7 @@ func (gs *GoogleSheet) update(spreadsheetId string, updateRange string, updateVa
 	}
 }
 
-func (gs *GoogleSheet) write(spreadsheetId string, writeRange string, values [][]interface{}) {
+func (gs *GoogleSheet) Write(spreadsheetId string, writeRange string, values [][]interface{}) {
 	valueInputOption := "RAW"
 	rb := &sheets.ValueRange{
 		MajorDimension: "ROWS",
