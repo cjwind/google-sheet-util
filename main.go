@@ -7,32 +7,43 @@ import (
 	"log"
 )
 
-func main() {
+type GoogleSheet struct {
+	srv *sheets.Service
+}
+
+func (gs *GoogleSheet) Init() {
+	var err error
+
 	ctx := context.Background()
-	srv, err := sheets.NewService(ctx)
+	gs.srv, err = sheets.NewService(ctx)
 	if err != nil {
 		log.Fatalf("Unable to new sheets service: %v", err)
 	}
+}
+
+func main() {
+	var gs GoogleSheet
+	gs.Init()
 
 	// https://docs.google.com/spreadsheets/d/12Luq-VG23UxdcIhfmNCtW_BL4fpHPUwUK-cfwRJyJx0/edit
 	spreadsheetId := "12Luq-VG23UxdcIhfmNCtW_BL4fpHPUwUK-cfwRJyJx0"
 	readRange := "Table!A2:E"
 
-	values := read(srv, spreadsheetId, readRange)
+	values := read(gs.srv, spreadsheetId, readRange)
 	fmt.Println(values)
 
-	var writeValues [][]interface{}
-	row := []interface{}{"AAA", "BBB"}
-	writeValues = append(writeValues, row)
-	write(srv, spreadsheetId, "Table", writeValues)
-
-	var updateValues [][]interface{}
-	row = []interface{}{"BBB", "CCC", "DDD"}
-	updateValues = append(updateValues, row)
-	update(srv, spreadsheetId, "Table!A3", updateValues)
-
-	clearRange := "Table!A3:E"
-	clear(srv, spreadsheetId, clearRange)
+	//var writeValues [][]interface{}
+	//row := []interface{}{"AAA", "BBB"}
+	//writeValues = append(writeValues, row)
+	//write(srv, spreadsheetId, "Table", writeValues)
+	//
+	//var updateValues [][]interface{}
+	//row = []interface{}{"BBB", "CCC", "DDD"}
+	//updateValues = append(updateValues, row)
+	//update(srv, spreadsheetId, "Table!A3", updateValues)
+	//
+	//clearRange := "Table!A3:E"
+	//clear(srv, spreadsheetId, clearRange)
 }
 
 func clear(srv *sheets.Service, spreadsheetId string, clearRange string) {
