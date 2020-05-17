@@ -32,11 +32,11 @@ func main() {
 	values := gs.Read(spreadsheetId, readRange)
 	fmt.Println(values)
 
-	//var writeValues [][]interface{}
-	//row := []interface{}{"AAA", "BBB"}
-	//writeValues = append(writeValues, row)
-	//write(srv, spreadsheetId, "Table", writeValues)
-	//
+	var writeValues [][]interface{}
+	row := []interface{}{"AAA", "BBB"}
+	writeValues = append(writeValues, row)
+	gs.write(spreadsheetId, "Table", writeValues)
+
 	//var updateValues [][]interface{}
 	//row = []interface{}{"BBB", "CCC", "DDD"}
 	//updateValues = append(updateValues, row)
@@ -69,14 +69,14 @@ func update(srv *sheets.Service, spreadsheetId string, updateRange string, updat
 	}
 }
 
-func write(srv *sheets.Service, spreadsheetId string, writeRange string, values [][]interface{}) {
+func (gs *GoogleSheet) write(spreadsheetId string, writeRange string, values [][]interface{}) {
 	valueInputOption := "RAW"
 	rb := &sheets.ValueRange{
 		MajorDimension: "ROWS",
 		Values:         values,
 	}
 
-	_, err := srv.Spreadsheets.Values.Append(spreadsheetId, writeRange, rb).ValueInputOption(valueInputOption).Do()
+	_, err := gs.srv.Spreadsheets.Values.Append(spreadsheetId, writeRange, rb).ValueInputOption(valueInputOption).Do()
 	if err != nil {
 		log.Fatal(err)
 	}
