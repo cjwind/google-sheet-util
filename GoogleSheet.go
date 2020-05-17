@@ -1,4 +1,4 @@
-package main
+package googlesheet
 
 import (
 	"golang.org/x/net/context"
