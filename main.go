@@ -12,15 +12,13 @@ type GoogleSheet struct {
 	spreadsheetId string
 }
 
-func (gs *GoogleSheet) Init(spreadsheetId string) {
+func (gs *GoogleSheet) Init(spreadsheetId string) (err error) {
 	gs.spreadsheetId = spreadsheetId
 
-	var err error
 	ctx := context.Background()
 	gs.srv, err = sheets.NewService(ctx)
-	if err != nil {
-		log.Fatalf("Unable to new sheets service: %v", err)
-	}
+
+	return err
 }
 
 func (gs *GoogleSheet) Read(readRange string) [][]interface{} {
@@ -74,7 +72,10 @@ func main() {
 	spreadsheetId := "12Luq-VG23UxdcIhfmNCtW_BL4fpHPUwUK-cfwRJyJx0"
 
 	var gs GoogleSheet
-	gs.Init(spreadsheetId)
+	err := gs.Init(spreadsheetId)
+	if err != nil {
+		log.Fatalf("Unable to init google sheet api: %v\n Run source env?", err)
+	}
 
 	readRange := "Table!A2:E"
 	values := gs.Read(readRange)
