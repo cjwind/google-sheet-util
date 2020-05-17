@@ -42,15 +42,15 @@ func main() {
 	updateValues = append(updateValues, row)
 	gs.update(spreadsheetId, "Table!A3", updateValues)
 
-	//clearRange := "Table!A3:E"
-	//clear(srv, spreadsheetId, clearRange)
+	clearRange := "Table!A3:E"
+	gs.clear(spreadsheetId, clearRange)
 }
 
-func clear(srv *sheets.Service, spreadsheetId string, clearRange string) {
+func (gs *GoogleSheet) clear(spreadsheetId string, clearRange string) {
 	// rb has type *ClearValuesRequest
 	rb := &sheets.ClearValuesRequest{}
 
-	_, err := srv.Spreadsheets.Values.Clear(spreadsheetId, clearRange, rb).Do()
+	_, err := gs.srv.Spreadsheets.Values.Clear(spreadsheetId, clearRange, rb).Do()
 	if err != nil {
 		log.Fatal(err)
 	}
