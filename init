@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# TODO setup credential file path
+export GOOGLE_APPLICATION_CREDENTIALS=
+
