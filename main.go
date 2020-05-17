@@ -8,12 +8,14 @@ import (
 )
 
 type GoogleSheet struct {
-	srv *sheets.Service
+	srv           *sheets.Service
+	spreadsheetId string
 }
 
-func (gs *GoogleSheet) Init() {
-	var err error
+func (gs *GoogleSheet) Init(spreadsheetId string) {
+	gs.spreadsheetId = spreadsheetId
 
+	var err error
 	ctx := context.Background()
 	gs.srv, err = sheets.NewService(ctx)
 	if err != nil {
@@ -22,68 +24,69 @@ func (gs *GoogleSheet) Init() {
 }
 
 func main() {
+	spreadsheetId := "12Luq-VG23UxdcIhfmNCtW_BL4fpHPUwUK-cfwRJyJx0"
+
 	var gs GoogleSheet
-	gs.Init()
+	gs.Init(spreadsheetId)
 
 	// https://docs.google.com/spreadsheets/d/12Luq-VG23UxdcIhfmNCtW_BL4fpHPUwUK-cfwRJyJx0/edit
-	spreadsheetId := "12Luq-VG23UxdcIhfmNCtW_BL4fpHPUwUK-cfwRJyJx0"
 	readRange := "Table!A2:E"
 
-	values := gs.Read(spreadsheetId, readRange)
+	values := gs.Read(readRange)
 	fmt.Println(values)
 
 	var writeValues [][]interface{}
 	row := []interface{}{"AAA", "BBB"}
 	writeValues = append(writeValues, row)
-	gs.Write(spreadsheetId, "Table", writeValues)
+	gs.Write("Table", writeValues)
 
 	var updateValues [][]interface{}
 	row = []interface{}{"BBB", "CCC", "DDD"}
 	updateValues = append(updateValues, row)
-	gs.Update(spreadsheetId, "Table!A3", updateValues)
+	gs.Update("Table!A3", updateValues)
 
 	clearRange := "Table!A3:E"
-	gs.Clear(spreadsheetId, clearRange)
+	gs.Clear(clearRange)
 }
 
-func (gs *GoogleSheet) Clear(spreadsheetId string, clearRange string) {
+func (gs *GoogleSheet) Clear(clearRange string) {
 	// rb has type *ClearValuesRequest
 	rb := &sheets.ClearValuesRequest{}
 
-	_, err := gs.srv.Spreadsheets.Values.Clear(spreadsheetId, clearRange, rb).Do()
+	_, err := gs.srv.Spreadsheets.Values.Clear(gs.spreadsheetId, clearRange, rb).Do()
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
-func (gs *GoogleSheet) Update(spreadsheetId string, updateRange string, updateValues [][]interface{}) {
+func (gs *GoogleSheet) Update(updateRange string, updateValues [][]interface{}) {
 	valueInputOption := "RAW"
 	rb := &sheets.ValueRange{
 		MajorDimension: "ROWS",
 		Values:         updateValues,
 	}
 
-	_, err := gs.srv.Spreadsheets.Values.Update(spreadsheetId, updateRange, rb).ValueInputOption(valueInputOption).Do()
+	_, err := gs.srv.Spreadsheets.Values.Update(gs.spreadsheetId, updateRange, rb).ValueInputOption(valueInputOption).Do()
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
-func (gs *GoogleSheet) Write(spreadsheetId string, writeRange string, values [][]interface{}) {
+func (gs *GoogleSheet) Write(writeRange string, values [][]interface{}) {
 	valueInputOption := "RAW"
 	rb := &sheets.ValueRange{
 		MajorDimension: "ROWS",
 		Values:         values,
 	}
 
-	_, err := gs.srv.Spreadsheets.Values.Append(spreadsheetId, writeRange, rb).ValueInputOption(valueInputOption).Do()
+	_, err := gs.srv.Spreadsheets.Values.Append(gs.spreadsheetId, writeRange, rb).ValueInputOption(valueInputOption).Do()
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
-func (gs *GoogleSheet) Read(spreadsheetId string, readRange string) [][]interface{} {
-	resp, err := gs.srv.Spreadsheets.Values.Get(spreadsheetId, readRange).Do()
+func (gs *GoogleSheet) Read(readRange string) [][]interface{} {
+	resp, err := gs.srv.Spreadsheets.Values.Get(gs.spreadsheetId, readRange).Do()
 
 	if err != nil {
 		log.Fatalf("Unable to retrieve data from sheet: %v", err)
