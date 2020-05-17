@@ -1,4 +1,4 @@
-# GoogleSheet util
+# GoogleSheet utility
 
 ## Setup
 
