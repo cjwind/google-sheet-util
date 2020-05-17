@@ -31,7 +31,7 @@ func (gs *GoogleSheet) Read(readRange string) ([][]interface{}, error) {
 	return resp.Values, err
 }
 
-func (gs *GoogleSheet) Write(writeRange string, values [][]interface{}) {
+func (gs *GoogleSheet) Write(writeRange string, values [][]interface{}) error {
 	valueInputOption := "RAW"
 	rb := &sheets.ValueRange{
 		MajorDimension: "ROWS",
@@ -39,9 +39,8 @@ func (gs *GoogleSheet) Write(writeRange string, values [][]interface{}) {
 	}
 
 	_, err := gs.srv.Spreadsheets.Values.Append(gs.spreadsheetId, writeRange, rb).ValueInputOption(valueInputOption).Do()
-	if err != nil {
-		log.Fatal(err)
-	}
+
+	return err
 }
 
 func (gs *GoogleSheet) Update(updateRange string, updateValues [][]interface{}) {
@@ -81,13 +80,15 @@ func main() {
 	if err != nil {
 		log.Fatalf("Unable to retrieve data from sheet: %v", err)
 	}
-
 	fmt.Println(values)
 
 	var writeValues [][]interface{}
 	row := []interface{}{"AAA", "BBB"}
 	writeValues = append(writeValues, row)
-	gs.Write("Table", writeValues)
+	err = gs.Write("Table", writeValues)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	var updateValues [][]interface{}
 	row = []interface{}{"BBB", "CCC", "DDD"}
