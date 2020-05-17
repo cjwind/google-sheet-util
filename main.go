@@ -43,7 +43,7 @@ func (gs *GoogleSheet) Write(writeRange string, values [][]interface{}) error {
 	return err
 }
 
-func (gs *GoogleSheet) Update(updateRange string, updateValues [][]interface{}) {
+func (gs *GoogleSheet) Update(updateRange string, updateValues [][]interface{}) error {
 	valueInputOption := "RAW"
 	rb := &sheets.ValueRange{
 		MajorDimension: "ROWS",
@@ -51,9 +51,8 @@ func (gs *GoogleSheet) Update(updateRange string, updateValues [][]interface{}) 
 	}
 
 	_, err := gs.srv.Spreadsheets.Values.Update(gs.spreadsheetId, updateRange, rb).ValueInputOption(valueInputOption).Do()
-	if err != nil {
-		log.Fatal(err)
-	}
+
+	return err
 }
 
 func (gs *GoogleSheet) Clear(clearRange string) {
@@ -93,7 +92,10 @@ func main() {
 	var updateValues [][]interface{}
 	row = []interface{}{"BBB", "CCC", "DDD"}
 	updateValues = append(updateValues, row)
-	gs.Update("Table!A3", updateValues)
+	err = gs.Update("Table!A3", updateValues)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	clearRange := "Table!A3:E"
 	gs.Clear(clearRange)
