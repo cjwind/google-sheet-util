@@ -1,4 +1,4 @@
-# GoogleSheet
+# GoogleSheet util
 
 ## Setup
 
@@ -21,7 +21,7 @@ func main() {
 
 	var gs googlesheet.GoogleSheet
 	if err := gs.Init(spreadsheetId); err != nil {
-		log.Fatalf("Unable to init google sheet api: %v\n Run source env?", err)
+		log.Fatalf("Unable to init google sheet api: %v\nCredential missing?", err)
 	}
 
 	readRange := "Table!A2:E"
