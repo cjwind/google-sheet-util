@@ -4,6 +4,10 @@
 
 Get credential from GCP then set `GOOGLE_APPLICATION_CREDENTIALS` to credential file path.
 
+```
+$ export GOOGLE_APPLICATION_CREDENTIALS=credential.json
+```
+
 ## Usage Example
 
 ```go
