@@ -29,7 +29,7 @@ func main() {
 	spreadsheetId := "12Luq-VG23UxdcIhfmNCtW_BL4fpHPUwUK-cfwRJyJx0"
 	readRange := "Table!A2:E"
 
-	values := read(gs.srv, spreadsheetId, readRange)
+	values := gs.Read(spreadsheetId, readRange)
 	fmt.Println(values)
 
 	//var writeValues [][]interface{}
@@ -82,8 +82,8 @@ func write(srv *sheets.Service, spreadsheetId string, writeRange string, values 
 	}
 }
 
-func read(srv *sheets.Service, spreadsheetId string, readRange string) [][]interface{} {
-	resp, err := srv.Spreadsheets.Values.Get(spreadsheetId, readRange).Do()
+func (gs *GoogleSheet) Read(spreadsheetId string, readRange string) [][]interface{} {
+	resp, err := gs.srv.Spreadsheets.Values.Get(spreadsheetId, readRange).Do()
 
 	if err != nil {
 		log.Fatalf("Unable to retrieve data from sheet: %v", err)
