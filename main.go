@@ -55,14 +55,13 @@ func (gs *GoogleSheet) Update(updateRange string, updateValues [][]interface{}) 
 	return err
 }
 
-func (gs *GoogleSheet) Clear(clearRange string) {
+func (gs *GoogleSheet) Clear(clearRange string) error {
 	// rb has type *ClearValuesRequest
 	rb := &sheets.ClearValuesRequest{}
 
 	_, err := gs.srv.Spreadsheets.Values.Clear(gs.spreadsheetId, clearRange, rb).Do()
-	if err != nil {
-		log.Fatal(err)
-	}
+
+	return err
 }
 
 func main() {
@@ -98,5 +97,8 @@ func main() {
 	}
 
 	clearRange := "Table!A3:E"
-	gs.Clear(clearRange)
+	err = gs.Clear(clearRange)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
